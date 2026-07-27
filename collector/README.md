@@ -28,15 +28,36 @@ curating, tagging, and anything agent-facing belongs in `board`.
 ## Setup
 
 1. Free account at [cloudinary.com](https://cloudinary.com) (no credit card).
-2. Copy the three values from **Console → Dashboard → API Keys** into `.env.local`:
+2. Copy the three values from **Console → Dashboard → API Keys** into `.env.local`,
+   and pick a username and password for yourself:
 
    ```
    CLOUDINARY_CLOUD_NAME=
    CLOUDINARY_API_KEY=
    CLOUDINARY_API_SECRET=
+   COLLECTOR_USER=
+   COLLECTOR_PASSWORD=
    ```
 
 3. `npm run dev`, then open <http://localhost:3000>.
+
+## Auth
+
+HTTP Basic, checked in `proxy.ts` against the two env vars above. No database
+table, no session store, no login page — the browser's own prompt does the work.
+
+| Path | Protected |
+| --- | --- |
+| `/` and everything else | yes |
+| `/api/ingest` | yes |
+| `/api/media` | **no** — the board and agents read it |
+
+`/api/media` is deliberately open. It is read-only: there is no route in this
+app that mutates anything without credentials.
+
+Credentials are compared with `timingSafeEqual` over SHA-256 digests of both
+sides, so neither the username nor the password leaks its length through
+response timing.
 
 ## How it works
 
