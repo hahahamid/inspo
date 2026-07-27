@@ -1,19 +1,19 @@
 import { v2 as cloudinary } from 'cloudinary'
-import type { MediaKind } from './db'
+import type { MediaKind } from './types'
 import { TweetError } from './tweet'
 
 const FOLDER = 'collector'
 
 let configured = false
 
-function client() {
+export function client() {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME
   const apiKey = process.env.CLOUDINARY_API_KEY
   const apiSecret = process.env.CLOUDINARY_API_SECRET
 
   if (!cloudName || !apiKey || !apiSecret) {
     throw new TweetError(
-      'Cloudinary is not configured. Copy .env.example to .env.local and fill in your three keys from cloudinary.com/console.',
+      'Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET.',
       500,
     )
   }

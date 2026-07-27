@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Inspo Collector",
-  description: "Back office for the inspo board — pulls design references off X into Cloudinary.",
+  title: { default: "Inspo", template: "%s" },
+  description: "Web design references saved off X.",
 };
 
 export default function RootLayout({

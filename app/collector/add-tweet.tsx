@@ -35,8 +35,8 @@ export default function AddTweet() {
       setNote({
         kind: 'ok',
         text: data.alreadySaved
-          ? `Already saved — @${data.tweet.author}`
-          : `Saved ${data.tweet.media.length} item${data.tweet.media.length === 1 ? '' : 's'} from @${data.tweet.author}`,
+          ? `Already saved — @${data.media[0]?.author}`
+          : `Saved ${data.media.length} item${data.media.length === 1 ? '' : 's'} from @${data.media[0]?.author}`,
       })
       router.refresh()
     } catch {

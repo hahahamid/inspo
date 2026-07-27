@@ -4,54 +4,56 @@ A personal design-reference pipeline. Web design I like gets saved off X,
 stored durably, and handed to a coding agent so it can build things in a style
 I actually want.
 
-```
-   X / Twitter
-        |
-        v
-  [ collector ]   back office. paste a link, media -> Cloudinary
-        |
-        |  GET /api/media
-        v
-  [ board ]       Pinterest-style wall of everything saved
-        |
-        v
-  Claude / Codex  reads the board, learns the taste,
-                  applies it to future design work
-```
+One Next.js app, two surfaces:
 
-## Apps
-
-| App | Port | Runs |
+| Route | What | Auth |
 | --- | --- | --- |
-| [`collector/`](./collector) | 3000 | locally — basic auth on everything except `/api/media` |
-| [`board/`](./board) | 3001 | reads the collector's feed, no credentials, no write routes |
+| `/` | The board — masonry wall of everything saved | public |
+| `/collector` | Back office — paste a link, it gets saved | **basic auth** |
+| `/api/media` | JSON feed of every saved file | public |
+| `/api/ingest` | Save a post | **basic auth** |
 
-Start both:
+Anyone can look. Only you can add.
 
-```bash
-cd collector && npm run dev    # :3000
-cd board     && npm run dev    # :3001
-```
-
-The board reads `COLLECTOR_URL` (default `http://localhost:3000`). If the
-collector is down the board says so rather than rendering an empty wall.
-
-## Why the collector is never deployed
-
-It has the only write endpoints in the system: ingest and (eventually) delete.
-Exposing it publicly would mean building auth to protect a tool with exactly one
-user. Keeping it on localhost removes the problem instead of solving it.
-
-The board is pure read. It has no upload route and no delete route, so it is
-safe to deploy with no auth at all — the worst a stranger can do is look.
-
-## Getting started
+## Setup
 
 ```bash
-cd collector
-cp .env.example .env.local     # add your Cloudinary keys
+cp .env.example .env.local     # Cloudinary keys + a username/password
 npm install
-npm run dev
+npm run dev                    # http://localhost:3000
 ```
 
-See [`collector/README.md`](./collector/README.md) for the full setup.
+## How it works
+
+```
+paste a link at /collector
+  -> parse the numeric post id out of the URL
+  -> GET api.fxtwitter.com/i/status/<id>        (free, no auth)
+  -> Cloudinary pulls each media URL server-side
+  -> metadata appended to a JSON index, also on Cloudinary
+  -> shows up on the board at /
+```
+
+## There is no database
+
+Metadata lives in a single `collector/index.json` raw upload sitting next to
+the media it describes. Reads go through the Cloudinary Admin API to get a
+versioned URL, so they never hit a stale CDN copy. Writes are
+read-modify-write on the whole blob.
+
+That would be unsafe with concurrent writers. There is exactly one writer — a
+person clicking Save — so it isn't. It also means the app has no filesystem
+dependency, which is what lets it deploy anywhere.
+
+## Deploying
+
+Vercel, root directory left at the repo root. Set all five environment
+variables in the project settings; `.env.local` never leaves your machine.
+
+## Feeding an agent
+
+The board's **copy urls** button puts every currently-visible Cloudinary URL
+on the clipboard, one per line. Filter to one designer first if you want an
+agent to learn a specific style rather than everything at once.
+
+`/api/media` is the same data as JSON, CORS-open, no credentials needed.

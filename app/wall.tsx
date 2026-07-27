@@ -1,11 +1,19 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { BoardMedia } from '@/lib/media'
+import type { MediaItem } from '@/lib/types'
 
 type KindFilter = 'all' | 'photo' | 'video'
 
-export default function Wall({ media }: { media: BoardMedia[] }) {
+export default function Wall({
+  media,
+  title = 'Inspo Board',
+  sticky = true,
+}: {
+  media: MediaItem[]
+  title?: string
+  sticky?: boolean
+}) {
   const [kind, setKind] = useState<KindFilter>('all')
   const [author, setAuthor] = useState<string | null>(null)
   const [index, setIndex] = useState<number | null>(null)
@@ -66,9 +74,13 @@ export default function Wall({ media }: { media: BoardMedia[] }) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-white/8 bg-neutral-950/80 backdrop-blur-md">
+      <header
+        className={`z-30 border-b border-white/8 bg-neutral-950/80 backdrop-blur-md ${
+          sticky ? 'sticky top-0' : ''
+        }`}
+      >
         <div className="mx-auto flex max-w-[1800px] flex-wrap items-center gap-x-5 gap-y-3 px-5 py-3">
-          <h1 className="text-sm font-semibold tracking-tight text-neutral-100">Inspo Board</h1>
+          <h1 className="text-sm font-semibold tracking-tight text-neutral-100">{title}</h1>
 
           <div className="flex gap-1">
             {(['all', 'photo', 'video'] as const).map((k) => (

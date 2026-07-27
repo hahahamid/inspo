@@ -1,4 +1,4 @@
-import type { MediaKind } from './db'
+import type { MediaKind } from './types'
 
 export type FetchedMedia = {
   kind: MediaKind

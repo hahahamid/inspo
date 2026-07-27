@@ -25,18 +25,14 @@ function challenge(message: string) {
 }
 
 export function proxy(request: NextRequest) {
-  // The board and any agent read this feed. It is read-only — no ingest,
-  // no delete — so it stays open. Everything else requires credentials.
-  if (request.nextUrl.pathname.startsWith('/api/media')) return
-
   const user = process.env.COLLECTOR_USER
   const password = process.env.COLLECTOR_PASSWORD
 
   if (!user || !password) {
-    return new Response(
-      'COLLECTOR_USER and COLLECTOR_PASSWORD are not set. Add them to .env.local.',
-      { status: 500, headers: { 'content-type': 'text/plain; charset=utf-8' } },
-    )
+    return new Response('COLLECTOR_USER and COLLECTOR_PASSWORD are not set.', {
+      status: 500,
+      headers: { 'content-type': 'text/plain; charset=utf-8' },
+    })
   }
 
   const header = request.headers.get('authorization')
@@ -60,6 +56,11 @@ export function proxy(request: NextRequest) {
   if (!okUser || !okPassword) return challenge('Invalid credentials.')
 }
 
+/**
+ * Only the write surface is guarded. The board at `/` and the `/api/media`
+ * feed stay public — they are read-only, and agents need the feed without
+ * credentials.
+ */
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/collector', '/collector/:path*', '/api/ingest', '/api/ingest/:path*'],
 }

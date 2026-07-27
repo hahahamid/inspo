@@ -1,11 +1,21 @@
 .DS_Store
 node_modules/
 .next/
-
-# scratch output from unrelated tooling
-tmp/
+/out/
+/build
 
 # never commit credentials
 .env
 .env.local
 .env.*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# debug
+npm-debug.log*
+.pnpm-debug.log*
+
+# vercel
+.vercel
