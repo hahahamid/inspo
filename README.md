@@ -21,10 +21,20 @@ I actually want.
 
 ## Apps
 
-| App | State | Runs |
+| App | Port | Runs |
 | --- | --- | --- |
-| [`collector/`](./collector) | working | locally only — never deployed |
-| `board/` | not built yet | deployable, read-only |
+| [`collector/`](./collector) | 3000 | locally — basic auth on everything except `/api/media` |
+| [`board/`](./board) | 3001 | reads the collector's feed, no credentials, no write routes |
+
+Start both:
+
+```bash
+cd collector && npm run dev    # :3000
+cd board     && npm run dev    # :3001
+```
+
+The board reads `COLLECTOR_URL` (default `http://localhost:3000`). If the
+collector is down the board says so rather than rendering an empty wall.
 
 ## Why the collector is never deployed
 
