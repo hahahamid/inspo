@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+.next/
+
+# scratch output from unrelated tooling
+tmp/
+
+# never commit credentials
+.env
+.env.local
+.env.*.local
