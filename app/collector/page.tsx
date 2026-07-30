@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { listMedia } from '@/lib/store'
 import type { MediaItem } from '@/lib/types'
 import AddTweet from './add-tweet'
+import Bookmarklet from './bookmarklet'
 import Wall from '../wall'
 
 export const metadata: Metadata = { title: 'Inspo Collector' }
@@ -36,6 +37,8 @@ export default async function Collector() {
       </header>
 
       <AddTweet />
+
+      <Bookmarklet />
 
       {error && <p className="mt-6 text-sm text-red-400">{error}</p>}
 
