@@ -4,6 +4,8 @@ A personal design-reference pipeline. Web design I like gets saved off X,
 stored durably, and handed to a coding agent so it can build things in a style
 I actually want.
 
+Live at **<https://design-inspo.vercel.app>**.
+
 One Next.js app, two surfaces:
 
 | Route | What | Auth |
@@ -14,6 +16,10 @@ One Next.js app, two surfaces:
 | `/api/ingest` | Save a post | **basic auth** |
 
 Anyone can look. Only you can add.
+
+The board is deliberately bare: a kind filter, a count, and the work. Author
+filters and the copy-urls button are curation tools, so they live on
+`/collector` where the curating happens.
 
 ## Setup
 
@@ -52,8 +58,13 @@ variables in the project settings; `.env.local` never leaves your machine.
 
 ## Feeding an agent
 
-The board's **copy urls** button puts every currently-visible Cloudinary URL
-on the clipboard, one per line. Filter to one designer first if you want an
-agent to learn a specific style rather than everything at once.
+On `/collector`, the **copy urls** button puts every currently-visible
+Cloudinary URL on the clipboard, one per line. Filter by author first if you
+want an agent to learn one designer's style rather than everything at once.
 
-`/api/media` is the same data as JSON, CORS-open, no credentials needed.
+`/api/media` is the same data as JSON, CORS-open, no credentials needed — which
+is the better route for an agent that can fetch for itself:
+
+```
+GET https://design-inspo.vercel.app/api/media
+```
