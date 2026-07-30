@@ -38,5 +38,5 @@ export default async function Home() {
     )
   }
 
-  return <Wall media={media} />
+  return <Wall media={media} showAuthors={false} showCopy={false} />
 }

@@ -9,10 +9,16 @@ export default function Wall({
   media,
   title = 'Inspo Board',
   sticky = true,
+  showAuthors = true,
+  showCopy = true,
 }: {
   media: MediaItem[]
   title?: string
   sticky?: boolean
+  /** Author chips and the copy button are back-office affordances; the
+   *  public board stays uncluttered and just shows the work. */
+  showAuthors?: boolean
+  showCopy?: boolean
 }) {
   const [kind, setKind] = useState<KindFilter>('all')
   const [author, setAuthor] = useState<string | null>(null)
@@ -90,7 +96,7 @@ export default function Wall({
             ))}
           </div>
 
-          {authors.length > 1 && (
+          {showAuthors && authors.length > 1 && (
             <div className="flex flex-wrap gap-1">
               <Chip active={author === null} onClick={() => setAuthor(null)}>
                 everyone
@@ -105,14 +111,16 @@ export default function Wall({
 
           <div className="ml-auto flex items-center gap-3">
             <span className="font-mono text-[11px] text-neutral-600">{visible.length} shown</span>
-            <button
-              type="button"
-              onClick={copyUrls}
-              disabled={visible.length === 0}
-              className="rounded-md border border-white/12 px-3 py-1.5 font-mono text-[11px] text-neutral-300 transition hover:border-white/30 hover:text-white disabled:opacity-40"
-            >
-              {copied ? 'copied ✓' : 'copy urls'}
-            </button>
+            {showCopy && (
+              <button
+                type="button"
+                onClick={copyUrls}
+                disabled={visible.length === 0}
+                className="rounded-md border border-white/12 px-3 py-1.5 font-mono text-[11px] text-neutral-300 transition hover:border-white/30 hover:text-white disabled:opacity-40"
+              >
+                {copied ? 'copied ✓' : 'copy urls'}
+              </button>
+            )}
           </div>
         </div>
       </header>
