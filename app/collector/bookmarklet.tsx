@@ -2,9 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+/**
+ * Must contain no spaces. Some browsers percent-encode a bookmarklet's URL
+ * when saving it and then run it without decoding, so a single space becomes
+ * `%20` and the parser dies on `Unexpected token '%'`. That rules out `var`,
+ * `function` bodies with statements, and any prose in an alert.
+ *
+ * There is deliberately no "is this a post?" guard: /collector/save already
+ * answers that with a readable message, and adding the check here would cost
+ * the whitespace that breaks it.
+ */
 function build(origin: string) {
-  // Single line on purpose — bookmark URLs cannot contain newlines.
-  return `javascript:(function(){var u=location.href;if(!/\\/status\\/\\d+/.test(u)){alert('Open an X post first, then click this.');return;}window.open('${origin}/collector/save?url='+encodeURIComponent(u),'inspo','width=460,height=320');})();`
+  return `javascript:window.open('${origin}/collector/save?url='+encodeURIComponent(location.href),'inspo','width=460,height=320')`
 }
 
 export default function Bookmarklet() {
@@ -68,7 +77,8 @@ export default function Bookmarklet() {
 
       <p className="mt-3 text-xs text-neutral-600">
         Dragging blocked? Use <span className="font-mono">copy code</span>, make a new bookmark by
-        hand, and paste it as the URL.
+        hand, and paste it as the URL. Clicking it somewhere that is not a post just opens a window
+        saying so.
       </p>
     </section>
   )
